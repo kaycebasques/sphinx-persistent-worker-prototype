@@ -1,0 +1,2 @@
+# This mnemonic matches :java_worker and :python_worker, ensuring their actions are run as workers.
+build --strategy=EchoWorker=worker --worker_verbose

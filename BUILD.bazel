@@ -1,0 +1,18 @@
+load("//:echo.bzl", "echo")
+load("@rules_python//python:defs.bzl", "py_library")
+
+py_binary(
+    name = "echo_py",
+    srcs = [
+        "echo.py",
+    ],
+    main = "echo.py",
+)
+
+echo(
+    name = "echo",
+    executable = ":echo_py",
+    input = "//:input.txt",
+    mnemonic = "EchoWorker",
+    use_worker_if_possible = True,
+)
