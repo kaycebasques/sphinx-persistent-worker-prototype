@@ -1,2 +1,16 @@
 bazel_dep(name = "bazel_skylib", version = "1.7.1")
 bazel_dep(name = "rules_python", version = "1.4.1")
+
+git_override(
+    module_name = "rules_python",
+    commit = "c3f37134f9694fe1a1533bf1251f13b1903d2ffc",
+    remote = "https://github.com/kaycebasques/rules_python.git",
+)
+
+pip = use_extension("@rules_python//python/extensions:pip.bzl", "pip")
+pip.parse(
+    hub_name = "pypi",
+    python_version = "3.11",
+    requirements_lock = "//:requirements.lock",
+)
+use_repo(pip, "pypi")

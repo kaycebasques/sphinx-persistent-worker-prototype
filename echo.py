@@ -23,8 +23,13 @@ parser.add_argument("--persistent_worker", action="store_true")
 
 def _echo(args, worker_mode):
     message = f"worker_mode: {worker_mode}\n"
+    doctrees = pathlib.Path("doctrees")
+    message += f"doctrees_dir exists: {doctrees.is_dir()}\n"
+    if not doctrees.is_dir():
+        doctrees.mkdir()
     with open(vars(args).get('in')) as input:
-        message += f"input: {input.read()}"
+        message += f"vars: {vars(args)}\n"
+        message += f"input: {input.read()}\n"
         with open(args.out, 'w') as output:
             output.write(message)
 
@@ -76,7 +81,8 @@ class Worker:
     def _process_request(self, request: "WorkRequest") -> "WorkResponse | None":
         if request.get("cancel"):
             return None
-        _echo(parser.parse_args(args=request["arguments"]), True)
+        args, unknown = parser.parse_known_args(args=request["arguments"])
+        _echo(args, True)
         response = {
             "requestId": request.get("requestId", 0),
             "exitCode": 0,
@@ -89,7 +95,7 @@ class Worker:
 
 
 if __name__ == "__main__":
-    args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
     if args.persistent_worker:
         Worker(sys.stdin, sys.stdout).run()
     else:

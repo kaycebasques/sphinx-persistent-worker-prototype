@@ -4,6 +4,7 @@ def _echo(ctx):
     args = ctx.actions.args()
     args.add("--in", ctx.file.input)
     args.add("--out", ctx.outputs.out)
+    # args.add("--persistent_worker")
     if ctx.attr.use_worker_if_possible:
         # It is impossible to know at analysis time if this action will be executed by a worker;
         # that is controlled at execution time by --strategy=<mnemonic>=<strategy>.

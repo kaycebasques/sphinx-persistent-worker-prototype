@@ -1,18 +1,31 @@
-load("//:echo.bzl", "echo")
-load("@rules_python//python:defs.bzl", "py_library")
+load("@rules_python//sphinxdocs:sphinx.bzl", "sphinx_build_binary", "sphinx_docs")
+load("@rules_python//sphinxdocs:sphinx_docs_library.bzl", "sphinx_docs_library")
 
-py_binary(
-    name = "echo_py",
+sphinx_docs_library(
+    name = "sphinx_docs_library",
     srcs = [
-        "echo.py",
+        "index.rst",
     ],
-    main = "echo.py",
 )
 
-echo(
-    name = "echo",
-    executable = ":echo_py",
-    input = "//:input.txt",
-    mnemonic = "EchoWorker",
-    use_worker_if_possible = True,
+sphinx_build_binary(
+    name = "sphinx_build_binary",
+    deps = [
+        "@pypi//sphinx",
+    ]
+)
+
+sphinx_docs(
+    name = "sphinx_docs",
+    config = "conf.py",
+    formats = [
+        "html",
+    ],
+    sphinx = ":sphinx_build_binary",
+    deps = [
+        ":sphinx_docs_library",
+    ],
+    extra_opts = [
+        "--fail-on-warning",
+    ],
 )
